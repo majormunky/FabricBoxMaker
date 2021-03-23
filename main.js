@@ -58,15 +58,40 @@ function draw_grid() {
 }
 
 function update_selected_item_box() {
+	let item_colors = ["red", "blue", "green", "yellow"];
 	let el = document.getElementById("selected-item-info");
 	if (selected_item) {
-		let output = `<p>x: ${selected_item.get("left")}</p>`;
-		output += `<p>y: ${selected_item.get("top")}</p>`;
-		output += `<p>width: ${selected_item.get("width")}`;
-		output += `<p>height: ${selected_item.get("height")}`;
-		el.innerHTML = output;
+		document.getElementById("selected-item-x").innerHTML = selected_item.get("left");
+		document.getElementById("selected-item-y").innerHTML = selected_item.get("top");
+		document.getElementById("selected-item-width").innerHTML = selected_item.get("width");
+		document.getElementById("selected-item-height").innerHTML = selected_item.get("height");
+		
+		let select_output = "<select id='selected-item-color-select'>";
+		let current_color = selected_item.get("fill");
+		for (var i = 0; i < item_colors.length; i++) {
+			let c = item_colors[i];
+			if (current_color == c) {
+				select_output += `<option value='${c}' selected='selected'>${c}</option>`;
+			} else {
+				select_output += `<option value='${c}'>${c}</option>`;
+			}
+
+		}
+		select_output += "</select>";
+		
+		document.getElementById("selected-item-color").innerHTML = select_output;
+		
+		document.getElementById("selected-item-info").style.display = "block";
+		document.getElementById("selected-no-item-info").style.display = "none";
+		
+		document.getElementById("selected-item-color-select").addEventListener("change", (event) => {
+			let new_color = event.target.value;
+			selected_item.set("fill", new_color);
+			canvas.renderAll();
+		});
 	} else {
-		el.innerHTML = "<p>No Selected Item</p>";
+		document.getElementById("selected-item-info").style.display = "none";
+		document.getElementById("selected-no-item-info").style.display = "block";
 	}
 }
 
