@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>Document</title>
+		<title>FabricBoxMaker</title>
 		<style>
 			* { padding: 0; margin: 0; }
 			body {
@@ -140,7 +140,10 @@
 					);
 					lines.push(new_line);
 				}
-				line_group = new fabric.Group(lines, {left: 0, top: 0, selectable: false, hoverCursor: "default"});
+				line_group = new fabric.Group(
+					lines, 
+					{left: 0, top: 0, selectable: false, hoverCursor: "default"}
+				);
 
 				canvas.add(line_group);
 				line_group.sendToBack();
