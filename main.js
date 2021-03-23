@@ -57,6 +57,10 @@ function draw_grid() {
 	canvas.renderAll();
 }
 
+function to_title_case(str) {
+	return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 function update_selected_item_box() {
 	let item_colors = ["red", "blue", "green", "yellow"];
 	let el = document.getElementById("selected-item-info");
@@ -71,7 +75,7 @@ function update_selected_item_box() {
 		for (var i = 0; i < item_colors.length; i++) {
 			let c = item_colors[i];
 			if (current_color == c) {
-				select_output += `<option value='${c}' selected='selected'>${c}</option>`;
+				select_output += `<option value='${c}' selected='selected'>${to_title_case(c)}</option>`;
 			} else {
 				select_output += `<option value='${c}'>${c}</option>`;
 			}
