@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Document</title>
+		<style>
+			* { padding: 0; margin: 0; }
+			body {
+  				overflow: hidden; /* Hide scrollbars */
+  				font-family: sans-serif;
+			}
+
+			.toolbox {
+				position: absolute;
+				left: 20px;
+				top: 20px;
+				height: 400px;
+				width: 200px;
+				border: 1px solid black;
+				background-color: #bbb;
+				z-index: 10000;
+				border-bottom-left-radius: 8px;
+				border-bottom-right-radius: 8px;
+			}
+
+			.toolbox-header {
+				background-color: #333;
+				color: white;
+				padding: 0.75em 1em;
+				margin-bottom: 0.5em;
+				cursor: move;
+			}
+
+			.toolbox-body {
+				padding-left: 0.5em;
+			}
+
+			.toolbox-body input {
+				width: 35%;
+				padding: 0.5em;
+				margin-left: 0.5em;
+			}
+
+			.toolbox-body div {
+				margin-bottom: 0.5em;
+			}
+
+			.btn {
+				padding: 0.5em 1em;
+				border-radius: 4px;
+				border-width: 0;
+			}
+
+			#selected-item-info {
+				border-top: 1px solid black;
+				margin-top: 1.5em;
+				padding-top: 1.0em;
+				padding-left: 0.5em;
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="main-canvas"></canvas>
+		<div class="toolbox" draggable="true" data-drag-element=".toolbox-header">
+			<div class="toolbox-header">
+				Tools
+			</div>
+			<div class="toolbox-body">
+				<div>
+					<label>Grid Size:</label>
+					<input type="text" id="grid-size-input" value="30" />
+				</div>
+				<div>
+					
+					<button id="new-rect" class="btn">New Rect</button>
+				</div>
+				<div id="selected-item-info"></div>
+			</div>
+			
+		</div>
+		<script src="https://cdn.jsdelivr.net/npm/fabric@4.3.1/dist/fabric.min.js"></script>
+		<script src="draggable.js"></script>
+		<script>
+			let grid_size = 30;
+			let grid_color = "#DDD"
+			let canvas;
+			let selected_item = null;
+			let line_group = null;
+
+
+			function position_toolbox(pos_name) {
+				let toolbox = document.querySelector(".toolbox");
+				let dimensions = get_window_size();
+				let toolbar_x = dimensions.width - toolbox.clientWidth - 20;
+				if (pos_name == "top-right") {
+					toolbox.style.top = "20px";
+					toolbox.style.left = toolbar_x + "px";
+				}
+			}
+
+			function get_window_size() {
+				return {
+					width: window.innerWidth,
+					height: window.innerHeight
+				}
+			}
+
+			function resize_canvas() {
+				console.log("Resizing Canvas");
+				let dimensions = get_window_size();
+				canvas.setWidth(dimensions.width);
+				canvas.setHeight(dimensions.height);
+			}
+
+			function draw_grid() {
+				if (line_group) {
+					canvas.remove(line_group);
+					line_group = null;
+				}
+
+				let dimensions = get_window_size();
+				let new_line;
+				let lines = [];
+
+				for (var i = 0; i < dimensions.width; i += grid_size) {
+					new_line = new fabric.Line(
+						[i, 0, i, dimensions.height],
+						{stroke: grid_color, strokeWidth: 1}
+					);
+					lines.push(new_line);
+				}
+
+				for (var i = 0; i < dimensions.height; i += grid_size) {
+					new_line = new fabric.Line(
+						[0, i, dimensions.width, i],
+						{stroke: grid_color, strokeWidth: 1}
+					);
+					lines.push(new_line);
+				}
+				line_group = new fabric.Group(lines, {left: 0, top: 0, selectable: false, hoverCursor: "default"});
+
+				canvas.add(line_group);
+				line_group.sendToBack();
+				canvas.renderAll();
+			}
+
+			function update_selected_item_box() {
+				let el = document.getElementById("selected-item-info");
+				if (selected_item) {
+					let output = `<p>x: ${selected_item.get("left")}</p>`;
+					output += `<p>y: ${selected_item.get("top")}</p>`;
+					output += `<p>width: ${selected_item.get("width")}`;
+					output += `<p>height: ${selected_item.get("height")}`;
+					el.innerHTML = output;
+				} else {
+					el.innerHTML = "<p>No Selected Item</p>";
+				}
+			}
+
+			document.getElementById("grid-size-input").addEventListener("change", (event) => {
+				let new_value = event.target.value;
+				let new_value_int = parseInt(new_value, 10);
+				if (isNaN(new_value_int)) {
+					event.target.value = "";
+					return false;
+				}
+
+				if ((new_value_int < 10) || ( new_value_int > 100)) {
+					event.target.value = "";
+					return false;
+				}
+
+				grid_size = new_value_int;
+				draw_grid();
+			});
+
+			document.getElementById("new-rect").addEventListener("click", (event) => {
+				let r = new fabric.Rect({
+					left: 30,
+					top: 30,
+					width: 300,
+					height: 300,
+					fill: "green"
+				});
+				r.setControlsVisibility({mtr: false});
+				canvas.add(r);
+			})
+
+			document.addEventListener("DOMContentLoaded", (event) => {
+				canvas = new fabric.Canvas(document.getElementById("main-canvas"));
+				canvas.on('object:moving', function(event) { 
+					event.target.set({
+				    	left: Math.round(event.target.left / grid_size) * grid_size,
+				    	top: Math.round(event.target.top / grid_size) * grid_size
+				  	});
+				  	event.target.bringToFront();
+				});
+
+				canvas.on('selection:created', (event)=> {
+					selected_item = event.target;
+					update_selected_item_box();
+				});
+
+				canvas.on('selection:cleared', (event) => {
+					console.log("selection cleared")
+					selected_item = null;
+					update_selected_item_box();
+				})
+
+				canvas.on('object:modified', function(event) {
+					let current_width = event.target.get("width") * event.target.get("scaleX");
+					let current_height = event.target.get("height") * event.target.get("scaleY");
+
+					current_width = Math.round(current_width / grid_size) * grid_size;
+					current_height = Math.round(current_height / grid_size) * grid_size;
+					
+					event.target.set({
+				    	width: Math.max(current_width, grid_size),
+				    	height: Math.max(current_height, grid_size),
+				    	scaleX: 1.0,
+				    	scaleY: 1.0,
+				  	});
+
+					event.target.set({
+				    	left: Math.round(event.target.left / grid_size) * grid_size,
+				    	top: Math.round(event.target.top / grid_size) * grid_size
+				  	});
+
+				  	update_selected_item_box();
+				});
+
+				make_draggable(document.querySelector(".toolbox"));
+				resize_canvas();
+				draw_grid();
+				position_toolbox("top-right");
+				update_selected_item_box();
+			});
+
+			window.addEventListener("resize", resize_canvas);
+		</script>
+	</body>
+</html>
