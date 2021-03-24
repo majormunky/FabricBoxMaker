@@ -77,7 +77,7 @@ function update_selected_item_box() {
 			if (current_color == c) {
 				select_output += `<option value='${c}' selected='selected'>${to_title_case(c)}</option>`;
 			} else {
-				select_output += `<option value='${c}'>${c}</option>`;
+				select_output += `<option value='${c}'>${to_title_case(c)}</option>`;
 			}
 
 		}
