@@ -20,6 +20,7 @@ function resize_canvas() {
 	let dimensions = get_window_size();
 	canvas.setWidth(dimensions.width);
 	canvas.setHeight(dimensions.height);
+	draw_grid();
 }
 
 function draw_grid() {
