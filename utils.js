@@ -95,7 +95,6 @@ function draw_selected_item_rect() {
 
 
 function update_selected_item_box(selected_item) {
-	console.log("update selected item box", selected_item)
 	let el = document.getElementById("selected-item-info");
 	if (selected_item) {
 		if (selected_item.get("type") == "rect") {

@@ -15,9 +15,6 @@ let PageRect = fabric.util.createClass(fabric.Rect, {
 	},
 	_render: function(ctx) {
 		this.callSuper("_render", ctx);
-		console.log(this)
-		console.log(-this.width / 2)
-		console.log(this.width / 2)
 		ctx.font = "20px Helvetica";
 		ctx.fillStyle = "#333";
 		ctx.fillText(
