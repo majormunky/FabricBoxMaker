@@ -133,7 +133,20 @@ document.getElementById("new-rect").addEventListener("click", (event) => {
 	});
 	r.setControlsVisibility({mtr: false});
 	canvas.add(r);
-})
+});
+
+document.getElementById("new-page").addEventListener("click", (event) => {
+	let r = new PageRect({
+		left: 30,
+		top: 30,
+		width: 120,
+		height: 240,
+		fill: "green",
+		label: "Page 1",
+	});
+	r.setControlsVisibility({mtr: false});
+	canvas.add(r);
+});
 
 document.addEventListener("DOMContentLoaded", (event) => {
 	canvas = new fabric.Canvas(document.getElementById("main-canvas"));
