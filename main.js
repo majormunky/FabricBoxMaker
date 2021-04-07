@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
 	canvas.on('selection:created', (event)=> {
 		selected_item = event.target;
-		update_selected_item_box();
+		update_selected_item_box(selected_item);
 	});
 
 	canvas.on('selection:cleared', (event) => {
@@ -100,5 +100,11 @@ document.addEventListener("DOMContentLoaded", (event) => {
 	position_toolbox("top-right");
 	update_selected_item_box();
 });
+
+document.addEventListener("SelectedItemColorChange", (event) => {
+	let new_color = event.detail.new_color;
+	selected_item.set("fill", new_color);
+	canvas.renderAll();
+})
 
 window.addEventListener("resize", resize_canvas);

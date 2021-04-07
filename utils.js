@@ -62,39 +62,44 @@ function to_title_case(str) {
 	return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-function update_selected_item_box() {
+function draw_selected_item_rect() {
+	document.getElementById("selected-item-x").innerHTML = selected_item.get("left");
+	document.getElementById("selected-item-y").innerHTML = selected_item.get("top");
+	document.getElementById("selected-item-width").innerHTML = selected_item.get("width");
+	document.getElementById("selected-item-height").innerHTML = selected_item.get("height");
+	
 	let item_colors = ["red", "blue", "green", "yellow"];
+	let select_output = "<select id='selected-item-color-select'>";
+	let current_color = selected_item.get("fill");
+	for (var i = 0; i < item_colors.length; i++) {
+		let c = item_colors[i];
+		if (current_color == c) {
+			select_output += `<option value='${c}' selected='selected'>${to_title_case(c)}</option>`;
+		} else {
+			select_output += `<option value='${c}'>${to_title_case(c)}</option>`;
+		}
+
+	}
+	select_output += "</select>";
+	
+	document.getElementById("selected-item-color").innerHTML = select_output;
+	
+	document.getElementById("selected-item-info").style.display = "block";
+	document.getElementById("selected-no-item-info").style.display = "none";
+	
+	document.getElementById("selected-item-color-select").addEventListener("change", (event) => {
+		let new_event = new CustomEvent("SelectedItemColorChange", {detail: {new_color: event.target.value}})
+		document.dispatchEvent(new_event);
+	});
+}
+
+
+function update_selected_item_box(selected_item) {
+	console.log("update selected item box", selected_item)
 	let el = document.getElementById("selected-item-info");
 	if (selected_item) {
-		if (selected_item.get("type") == "Rect") {
-			document.getElementById("selected-item-x").innerHTML = selected_item.get("left");
-			document.getElementById("selected-item-y").innerHTML = selected_item.get("top");
-			document.getElementById("selected-item-width").innerHTML = selected_item.get("width");
-			document.getElementById("selected-item-height").innerHTML = selected_item.get("height");
-			
-			let select_output = "<select id='selected-item-color-select'>";
-			let current_color = selected_item.get("fill");
-			for (var i = 0; i < item_colors.length; i++) {
-				let c = item_colors[i];
-				if (current_color == c) {
-					select_output += `<option value='${c}' selected='selected'>${to_title_case(c)}</option>`;
-				} else {
-					select_output += `<option value='${c}'>${to_title_case(c)}</option>`;
-				}
-
-			}
-			select_output += "</select>";
-			
-			document.getElementById("selected-item-color").innerHTML = select_output;
-			
-			document.getElementById("selected-item-info").style.display = "block";
-			document.getElementById("selected-no-item-info").style.display = "none";
-			
-			document.getElementById("selected-item-color-select").addEventListener("change", (event) => {
-				let new_color = event.target.value;
-				selected_item.set("fill", new_color);
-				canvas.renderAll();
-			});
+		if (selected_item.get("type") == "rect") {
+			draw_selected_item_rect(selected_item);
 		} else if (selected_item.get("type") == "pageRect") {
 			console.log("Page Clicked")
 		}
