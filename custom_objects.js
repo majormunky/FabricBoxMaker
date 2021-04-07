@@ -7,6 +7,9 @@ let PageRect = fabric.util.createClass(fabric.Rect, {
 		this.set("fill", "white");
 		this.set("stroke", "black");
 		this.set("hasControls", false);
+		this.set("selectedFill", "#ccc");
+		this.set("selected", false);
+		this.cacheProperties.push("selected");
 	},
 	toObject: function() {
 		return fabric.util.object.extend(this.callSuper('toObject'), {
@@ -15,6 +18,12 @@ let PageRect = fabric.util.createClass(fabric.Rect, {
 	},
 	_render: function(ctx) {
 		this.callSuper("_render", ctx);
+
+		if (this.get("selected") === true) {
+			ctx.fillStyle = this.get("selectedFill");
+			ctx.fillRect(-this.width / 2, -this.height / 2, this.width, 40);
+		}
+
 		ctx.font = "20px Helvetica";
 		ctx.fillStyle = "#333";
 		ctx.fillText(

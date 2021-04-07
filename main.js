@@ -58,11 +58,13 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
 	canvas.on('selection:created', (event)=> {
 		selected_item = event.target;
+		selected_item.set("selected", true);
 		update_selected_item_box(selected_item);
 	});
 
 	canvas.on('selection:cleared', (event) => {
 		console.log("selection cleared")
+		selected_item.set("selected", false);
 		selected_item = null;
 		update_selected_item_box();
 	});
