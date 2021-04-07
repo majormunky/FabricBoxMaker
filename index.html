@@ -22,31 +22,36 @@
 					<button id="new-page" class="btn">New Page</button>
 				</div>
 				<div id="selected-item-info" style="display: none">
-					<div>
-						<label>X:</label>
-						<span id="selected-item-x"></span>
-					</div>
-					<div>
-						<label>Y:</label>
-						<span id="selected-item-y"></span>
-					</div>
-					<div>
-						<label>Width:</label>
-						<span id="selected-item-width"></span>
-					</div>
-					<div>
-						<label>Height:</label>
-						<span id="selected-item-height"></span>
-					</div>
-					<div>
-						<label>Color:</label>
-						<span id="selected-item-color"></span>
-					</div>
+					
 				</div>
 				<div id="selected-no-item-info">Nothing Selected</div>
 			</div>
 			
 		</div>
+		<template id="selected-item-template">
+			<div>
+				<div>
+					<label>X:</label>
+					<span id="selected-item-x"></span>
+				</div>
+				<div>
+					<label>Y:</label>
+					<span id="selected-item-y"></span>
+				</div>
+				<div>
+					<label>Width:</label>
+					<span id="selected-item-width"></span>
+				</div>
+				<div>
+					<label>Height:</label>
+					<span id="selected-item-height"></span>
+				</div>
+				<div>
+					<label>Color:</label>
+					<span id="selected-item-color"></span>
+				</div>
+			</div>
+		</template>
 		<script src="https://cdn.jsdelivr.net/npm/fabric@4.3.1/dist/fabric.min.js"></script>
 		<script src="custom_objects.js"></script>
 		<script src="utils.js"></script>

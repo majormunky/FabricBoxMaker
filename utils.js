@@ -62,11 +62,14 @@ function to_title_case(str) {
 	return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-function draw_selected_item_rect() {
-	document.getElementById("selected-item-x").innerHTML = selected_item.get("left");
-	document.getElementById("selected-item-y").innerHTML = selected_item.get("top");
-	document.getElementById("selected-item-width").innerHTML = selected_item.get("width");
-	document.getElementById("selected-item-height").innerHTML = selected_item.get("height");
+function draw_selected_item_rect(selected_item) {
+	let item_template = document.getElementById("selected-item-template");
+	let item = item_template.content.firstElementChild.cloneNode(true);
+
+	item.querySelector("#selected-item-x").innerHTML = selected_item.get("left");
+	item.querySelector("#selected-item-y").innerHTML = selected_item.get("top");
+	item.querySelector("#selected-item-width").innerHTML = selected_item.get("width");
+	item.querySelector("#selected-item-height").innerHTML = selected_item.get("height");
 	
 	let item_colors = ["red", "blue", "green", "yellow"];
 	let select_output = "<select id='selected-item-color-select'>";
@@ -82,15 +85,22 @@ function draw_selected_item_rect() {
 	}
 	select_output += "</select>";
 	
-	document.getElementById("selected-item-color").innerHTML = select_output;
+	item.querySelector("#selected-item-color").innerHTML = select_output;
 	
-	document.getElementById("selected-item-info").style.display = "block";
+	let info_el = document.getElementById("selected-item-info");
+	info_el.appendChild(item);
+	info_el.style.display = "block";
 	document.getElementById("selected-no-item-info").style.display = "none";
 	
 	document.getElementById("selected-item-color-select").addEventListener("change", (event) => {
 		let new_event = new CustomEvent("SelectedItemColorChange", {detail: {new_color: event.target.value}})
 		document.dispatchEvent(new_event);
 	});
+}
+
+
+function draw_selected_item_pagerect(selected_item) {
+
 }
 
 
