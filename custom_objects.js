@@ -9,7 +9,7 @@ let PageRect = fabric.util.createClass(fabric.Rect, {
 		this.set("hasControls", false);
 		this.set("selectedFill", "#ccc");
 		this.set("selected", false);
-		this.cacheProperties.push("selected");
+		this.cacheProperties.push("selected", "label");
 	},
 	toObject: function() {
 		return fabric.util.object.extend(this.callSuper('toObject'), {
