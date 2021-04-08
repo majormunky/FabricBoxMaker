@@ -100,17 +100,29 @@ function draw_selected_item_rect(selected_item) {
 
 
 function draw_selected_item_pagerect(selected_item) {
+	let item_template = document.getElementById("selected-pagerect-template");
+	let item = item_template.content.firstElementChild.cloneNode(true);
 
+	item.querySelector("#selected-pagerect-title").value = selected_item.get("label");
+
+	let info_el = document.getElementById("selected-item-info");
+	info_el.appendChild(item);
+	info_el.style.display = "block";
+	document.getElementById("selected-no-item-info").style.display = "none";
+
+	
 }
 
 
 function update_selected_item_box(selected_item) {
 	let el = document.getElementById("selected-item-info");
+	el.innerHTML = "";
 	if (selected_item) {
 		if (selected_item.get("type") == "rect") {
 			draw_selected_item_rect(selected_item);
 		} else if (selected_item.get("type") == "pageRect") {
 			console.log("Page Clicked")
+			draw_selected_item_pagerect(selected_item);
 		}
 	} else {
 		document.getElementById("selected-item-info").style.display = "none";

@@ -4,6 +4,14 @@ let canvas;
 let selected_item = null;
 let line_group = null;
 
+document.querySelector(".toolbox").addEventListener("input", (event) => {
+	console.log("changed")
+	if (event.target.matches("#selected-pagerect-title")) {
+		selected_item.set('label', event.target.value);
+		canvas.renderAll();
+	}
+})
+
 document.getElementById("grid-size-input").addEventListener("change", (event) => {
 	let new_value = event.target.value;
 	let new_value_int = parseInt(new_value, 10);
