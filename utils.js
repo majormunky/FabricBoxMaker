@@ -114,16 +114,19 @@ function draw_selected_item_pagerect(selected_item) {
 }
 
 
-function update_selected_item_box(selected_item) {
+function update_selected_item_box(selected) {
 	let el = document.getElementById("selected-item-info");
 	el.innerHTML = "";
-	if (selected_item) {
-		if (selected_item.get("type") == "rect") {
-			draw_selected_item_rect(selected_item);
-		} else if (selected_item.get("type") == "pageRect") {
+	if (selected.length == 1) {
+		if (selected[0].get("type") == "rect") {
+			draw_selected_item_rect(selected[0]);
+		} else if (selected[0].get("type") == "pageRect") {
 			console.log("Page Clicked")
-			draw_selected_item_pagerect(selected_item);
+			draw_selected_item_pagerect(selected[0]);
 		}
+	} else if (selected.length > 1) {
+		let info_el = document.getElementById("selected-item-info");
+		info_el.innerHTML = "<p>Multiple Selected</p>";
 	} else {
 		document.getElementById("selected-item-info").style.display = "none";
 		document.getElementById("selected-no-item-info").style.display = "block";

@@ -1,14 +1,51 @@
 let grid_size = 30;
 let grid_color = "#DDD"
 let canvas;
-let selected_item = null;
+let selected = [];
 let line_group = null;
+
+function draw_line_between_objects(o1, o2) {
+	// figure out what object is on the left
+	let left_obj, right_obj;
+	if (o1.get("left") <= o2.get("left")) {
+		left_obj = o1;
+		right_obj = o2;
+	} else {
+		left_obj = o2;
+		right_obj = o1;
+	}
+
+	//console.log(left_obj);
+
+	let point1 = left_obj.getCenterPoint();
+	let point2 = right_obj.getCenterPoint();
+	let coords = [
+		point1.x, 
+		point1.y,
+		point2.x,
+		point2.y
+	];
+
+	console.log(coords);
+
+	let line = new fabric.Line(coords, {
+		fill: "red",
+		stroke: "red",
+		strokeWidth: 5,
+		selectable: false,
+		evented: false,
+	});
+
+	canvas.add(line);
+}
 
 document.querySelector(".toolbox").addEventListener("input", (event) => {
 	console.log("changed")
 	if (event.target.matches("#selected-pagerect-title")) {
-		selected_item.set('label', event.target.value);
-		canvas.renderAll();
+		if (selected.length == 1) {
+			selected[0].set('label', event.target.value);
+			canvas.renderAll();
+		}
 	}
 })
 
@@ -65,21 +102,41 @@ document.addEventListener("DOMContentLoaded", (event) => {
 	});
 
 	canvas.on('selection:created', (event)=> {
-		selected_item = event.target;
-		selected_item.set("selected", true);
-		update_selected_item_box(selected_item);
+		console.log("selection:created")
+		let target_type = event.target.get("type");
+		console.log("Target type: ", target_type);
+		if (target_type == "activeSelection") {
+			let obj_list = event.target.getObjects();
+			if (obj_list.length == 2) {
+				// we have 2 items, lets try to draw a line between them
+				draw_line_between_objects(obj_list[0], obj_list[1]);
+			}
+			return;
+		} else if (target_type == "pageRect") {
+			selected.push(event.target);
+			event.target.set("selected", true);
+		}
+		update_selected_item_box(selected);
 	});
 
 	canvas.on('selection:cleared', (event) => {
-		console.log("selection cleared")
-		selected_item.set("selected", false);
-		selected_item = null;
-		update_selected_item_box();
+		console.log("selection:cleared")
+
+		for (var i = 0; i < selected.length; i++) {
+			selected[i].set("selected", false);
+			selected[i] = null;
+		}
+
+		selected = [];
+		
+		update_selected_item_box(selected);
 	});
 	
 	canvas.on('selection:updated', (event) => {
-		selected_item = event.target;
-		update_selected_item_box();
+		console.log(event);
+		console.log("selection:updated")
+		//selected_item = event.target;
+		//update_selected_item_box();
 	})
 
 	canvas.on('object:modified', function(event) {
@@ -101,19 +158,19 @@ document.addEventListener("DOMContentLoaded", (event) => {
 	    	top: Math.round(event.target.top / grid_size) * grid_size
 	  	});
 
-	  	update_selected_item_box();
+	  	update_selected_item_box(selected);
 	});
 
 	make_draggable(document.querySelector(".toolbox"));
 	resize_canvas();
 	draw_grid();
 	position_toolbox("top-right");
-	update_selected_item_box();
+	update_selected_item_box(selected);
 });
 
 document.addEventListener("SelectedItemColorChange", (event) => {
 	let new_color = event.detail.new_color;
-	selected_item.set("fill", new_color);
+	selected[0].set("fill", new_color);
 	canvas.renderAll();
 })
 
